@@ -23,4 +23,5 @@ The Home Lab Project is a mini virtual environment that simulates the work envir
 - set up Shuffle and Configure
 
 ## Steps
+![1](https://github.com/user-attachments/assets/231be4b2-109b-4383-b42c-43b8b3e31e08)
 
