@@ -3,7 +3,7 @@
 ## Objective
 
 
-The Home Lab Project is a mini virtual environment that simulates the work environment of the Security Operations Center and is helpful to understand the work in cybersecurity. We enable attack simulations such as malware attacks, phishing emails, exploiting vulnerabilities, incident response, and log analysis.
+The Home Lab Project is a mini virtual environment that simulates the work environment of the Security Operations Center (SOC) and is helpful to understand the work in cybersecurity. We enable attack simulations such as malware attacks, phishing emails, exploiting vulnerabilities, incident response, and log analysis.
 
 ### Skills Learned
 
@@ -56,7 +56,58 @@ Next, we need to open PowerShell with administratier privileges to configure Sys
  ![5](https://github.com/user-attachments/assets/2cf1a112-d6b2-4cec-97b1-cea292d3b311)<br>
 
  That is Creat, Now Lets go to the section Tow <br>
+
+ ## Set Up Wazuh
  
+ Wazuh is a free, open-source security platform that combines Extended Detection and Response (XDR) and Security Information and Event Management (SIEM) functionalities. It delivers robust protection for endpoints and cloud workloads, empowering organizations to detect, analyze, and respond to threats efficiently. <br>
+
+### Key Features of Wazuh:<br>
+- #### Intrusion Detection:<br>
+Continuously monitors systems to detect unauthorized access or malicious activities.<br>
+
+- #### Log Data Analysis:<br>
+Collects and analyzes logs from multiple sources to identify potential security incidents.<br>
+
+- #### File Integrity Monitoring:<br>
+Tracks changes to critical files and directories, notifying administrators of unauthorized modifications.<br>
+
+- #### Vulnerability Detection:<br>
+Identifies known vulnerabilities in both software and hardware components across the network.<br>
+
+- #### Configuration Assessment:<br>
+Evaluates system configurations to ensure adherence to security policies and standards.<br>
+
+- #### Incident Response:<br>
+Provides tools and capabilities to quickly respond to and mitigate security incidents.<br>
+
+- #### Regulatory Compliance:<br>
+Helps organizations meet compliance requirements by offering essential security controls and reporting tools.<br>
+
+- #### Cloud Security:<br>
+Monitors and secures cloud-based infrastructures, ensuring protection across diverse environments.<br>
+
+### Wazuh Architecture:<br>
+Wazuh operates using lightweight agents installed on monitored systems and a centralized management server. The server processes and analyzes data collected by the agents, enabling comprehensive security monitoring and threat detection.<br>
+
+Let's start by installing Wazzuh:<br>
+`curl -sO https://packages.wazuh.com/4.10/wazuh-install.sh && sudo bash ./wazuh-install.sh -a` <br>
+
+
+ ![6](https://github.com/user-attachments/assets/7686969c-1644-44d0-890e-a9aa871d86a6)
+
+Finally, we will access the Wazuh dashboard. <br>
+![8](https://github.com/user-attachments/assets/07d2c71f-cdf7-4600-a83d-97a63e2cf8aa)
+
+Next, we need to configure Wazuh by setting up a new agent.<br>
+
+![9](https://github.com/user-attachments/assets/f36b40dc-82c0-4df9-b623-6d752978b28c)
+
+We need to put the IP address of the machine where Wazuh is installed.<br>
+
+![10](https://github.com/user-attachments/assets/ead272e4-a091-440e-87f6-5382a6a5f81a)
+
+
+
 
 
 
