@@ -23,5 +23,14 @@ The Home Lab Project is a mini virtual environment that simulates the work envir
 - set up Shuffle and Configure
 
 ## Steps
+Lab Scenario:
 ![1](https://github.com/user-attachments/assets/231be4b2-109b-4383-b42c-43b8b3e31e08)
+
+Prerequisites:
+Ubuntu Machine for Shuffle (4GB RAM)
+Ubuntu Machine for Wazuh (4GB RAM)
+Ubuntu Machine for TheHive (4GB RAM)
+Windows 10 for Wazuh Agent (4GB RAM)
+
+## Install And configure Sysmon for deep Windows event logging
 
