@@ -189,5 +189,20 @@ Now, let's edit Cassandra configuration file:<br>
 
 `nano /etc/cassandra/cassandra.yaml`<br>
 
+Enter the IP address of the machine where TheHive is installed.<br>
+![15](https://github.com/user-attachments/assets/effbdb3e-0355-4bec-b03a-ea6a64f98987)<br>
 
+![16](https://github.com/user-attachments/assets/8543d74f-e5c4-483f-8489-11eef093318f)
 
+*17*
+
+After installation, let's start and enable Cassandra:<br>
+
+`sudo systemctl start cassandra`<br>
+`sudo systemctl enable cassandra`<br>
+We also need to edit the configuration for Elasticsearch.<br>
+
+`nano /etc/elasticsearch/elasticsearch.yml`<br>
+
+*18*
+*19*
