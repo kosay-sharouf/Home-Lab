@@ -242,5 +242,39 @@ Then restart the Elasticsearch.<br>
 
 `systemctl restart elasticsearch`<br>
 Now, let's access TheHive again.<br>
-![25](https://github.com/user-attachments/assets/790aea2b-50c5-428a-ad27-66ccaeb6b842)
+![25](https://github.com/user-attachments/assets/790aea2b-50c5-428a-ad27-66ccaeb6b842) <br>
+
+## Execute Mimikatz and create detection rules in Wazuh <br>
+
+First, let's open Virus & Threat Protection to add the Downloads folder as an exclusion. <br>
+![26](https://github.com/user-attachments/assets/2fbe2f27-a0f2-4c4d-a323-1e3c44db58ee)<br>
+
+![27](https://github.com/user-attachments/assets/b9bfc656-6a7b-4330-b4ef-0e34475b3f38)<br>
+
+![28](https://github.com/user-attachments/assets/03cb980d-caa3-4811-8b92-70a13a12e96c)<br>
+![29](https://github.com/user-attachments/assets/ed265da8-4ca2-4c03-98f1-f8b849ecfcfb)<br>
+
+Now, let's install Mimikatz from this <a href="https://github.com/ParrotSec/mimikatz/blob/master/x64/mimikatz.exe">`link`<a><br>
+![30](https://github.com/user-attachments/assets/d5f3892b-6c28-4489-9c18-6ad32e48aa9d)<br>
+
+Now, let's execute mimikatz.exe and review the Wazuh dashboard for any related detections or alerts.<br>
+
+`.\mimikatz.exe Add-MpPreference -ExclusionProcess "mimikatz.exe"`<br>
+![31](https://github.com/user-attachments/assets/810ca81d-401d-4392-bc2b-4f788a8d0a5c)
+
+When I execute `mimikatz.exe`, Windows Defender blocks it. To proceed, I need to exclude the `mimikatz` process from detection.<br>
+
+Now, let's check the Wazuh dashboard for any related detections or alerts.<br>
+![32](https://github.com/user-attachments/assets/b9449165-aa22-43ec-8f6b-c59938d34481)
+
+Upon reviewing Wazuh, I did not find any indicators related to Mimikatz.<br>
+
+By default, Wazuh does not log all events; it only generates logs when a rule is triggered or an alert is generated. However, this behavior can be modified by configuring the `ossec.conf` file within the Wazuh Manager to enable comprehensive logging. Alternatively, specific rules can be created to monitor particular events. When these events occur, they will trigger an alert in Wazuh, allowing for efficient searching and analysis.<br>
+
+Next, let's proceed with editing the `ossec.conf` file.<br>
+`nano /var/ossec/etc/ossec.conf`<br>
+![33](https://github.com/user-attachments/assets/cce45b93-148b-4c9d-8509-e2a9d7cafc64)
+
+
+
 
