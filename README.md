@@ -106,9 +106,21 @@ We need to put the IP address of the machine where Wazuh is installed.<br>
 
 ![10](https://github.com/user-attachments/assets/ead272e4-a091-440e-87f6-5382a6a5f81a)
 
+![11](https://github.com/user-attachments/assets/b9e3cc80-0c20-4a7f-a223-12fb1f5f4752)
 
+Next, execute the following command on the Windows machine where you intend to install the Wazuh agent.<br>
+`Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.10.1-1.msi -OutFile $env:tmp\wazuh-agent; msiexec.exe /i $env:tmp\wazuh-agent /q WAZUH_MANAGER='192.168.204.147' WAZUH_AGENT_NAME='faresmorcy' `<br>
+Next, we need to initiate the Wazuhsvc service.<br>
+`net.exe start WazuhSvc`<br>
+![12](https://github.com/user-attachments/assets/3a32c1ca-176c-4eb4-a139-24925b82ba2b)
 
-
+Next, we need to modify the `ossec.conf` file to configure it for forwarding Sysmon logs to Wazuh.<br>
+![13](https://github.com/user-attachments/assets/5c7f45b1-2eed-40c9-808a-41950b0277fe)
+I only need to forward the Sysmon logs, nothing else.<br>
+Next, restart the Wazuh service.<br>
+`Restart-Service WazuhSvc` <br>
+Now, let's verify on the Wazuh dashboard whether the Wazuh agent is successfully sending Sysmon events.<br>
+![14](https://github.com/user-attachments/assets/3e7f79dc-963b-4b09-8705-a7fd647abba8)
 
 
 
