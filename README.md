@@ -46,16 +46,16 @@ Next, let's extract the Sysmon compressed folder and place the Sysmon configurat
 
 Next, we need to open PowerShell with administratier privileges to configure Sysmon.
 
-`.\Sysmon64.exe -i .\sysmonconfig.xml`
- Now Let's verify whether Sysmon is installed on the system.
- <code> Get-Service Sysmon64 </code>
+`.\Sysmon64.exe -i .\sysmonconfig.xml` <br>
+ Now Let's verify whether Sysmon is installed on the system.<br>
+ <code> Get-Service Sysmon64 </code><br>
  ![4](https://github.com/user-attachments/assets/2cdcaa98-1226-45f6-a701-d0261baa3b5d)
 
- We can also verify this using the Event Viewer.
- Applications and Services Logs -> Microsoft -> Windows -> Sysmon
- ![5](https://github.com/user-attachments/assets/2cf1a112-d6b2-4cec-97b1-cea292d3b311)
+ We can also verify this using the Event Viewer.<br>
+ `Applications and Services Logs -> Microsoft -> Windows -> Sysmon`<br>
+ ![5](https://github.com/user-attachments/assets/2cf1a112-d6b2-4cec-97b1-cea292d3b311)<br>
 
- That is Creat , Now Lets go to the section Tow
+ That is Creat , Now Lets go to the section Tow <br>
  
 
 
