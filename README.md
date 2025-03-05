@@ -34,3 +34,30 @@ Lab Scenario:
 
 ## Install And configure Sysmon for deep Windows event logging
 
+Sysmon (System Monitor) is a Windows service and device driver designed to monitor and log system activities. Once installed, it runs continuously, even after system reboots, and records events directly into the Windows event log. It offers comprehensive details on various activities, including process creation, network connections, and modifications to file creation timestamps.
+
+Now Let's start by installing Sysmon from here :<a href="https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon"> instal sysmon </a>
+We also need to download the Sysmon configuration file from the following URL:<a href="https://github.com/olafhartong/sysmon-modular/blob/master/sysmonconfig.xml"> Sysmon Modular Configuration. </a>
+![2](https://github.com/user-attachments/assets/c3f6d69c-e486-4697-ad40-c6968cce4cfb)
+
+Next, let's extract the Sysmon compressed folder and place the Sysmon configuration file in the same directory as Sysmon.
+
+![3](https://github.com/user-attachments/assets/c1f1d18e-168a-4a80-b8ed-10af432f5b03)
+
+Next, we need to open PowerShell with administratier privileges to configure Sysmon.
+
+`.\Sysmon64.exe -i .\sysmonconfig.xml`
+ Now Let's verify whether Sysmon is installed on the system.
+ <code> Get-Service Sysmon64 </code>
+ ![4](https://github.com/user-attachments/assets/2cdcaa98-1226-45f6-a701-d0261baa3b5d)
+
+ We can also verify this using the Event Viewer.
+ Applications and Services Logs -> Microsoft -> Windows -> Sysmon
+ ![5](https://github.com/user-attachments/assets/2cf1a112-d6b2-4cec-97b1-cea292d3b311)
+
+ That is Creat , Now Lets go to the section Tow
+ 
+
+
+
+
