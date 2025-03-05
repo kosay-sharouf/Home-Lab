@@ -3,7 +3,7 @@
 ## Objective
 
 
-The Detection Lab project aimed to establish a controlled environment for simulating and detecting cyber attacks. The primary focus was to ingest and analyze logs within a Security Information and Event Management (SIEM) system, generating test telemetry to mimic real-world attack scenarios. This hands-on experience was designed to deepen understanding of network security, attack patterns, and defensive strategies.
+The Home Lab Project is a mini virtual environment that simulates the work environment of the Security Operations Center and is helpful to understand the work in cybersecurity. We enable attack simulations such as malware attacks, phishing emails, exploiting vulnerabilities, incident response, and log analysis.
 
 ### Skills Learned
 [Bullet Points - Remove this afterwards]
