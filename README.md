@@ -192,9 +192,10 @@ Now, let's edit Cassandra configuration file:<br>
 Enter the IP address of the machine where TheHive is installed.<br>
 ![15](https://github.com/user-attachments/assets/effbdb3e-0355-4bec-b03a-ea6a64f98987)<br>
 
-![16](https://github.com/user-attachments/assets/8543d74f-e5c4-483f-8489-11eef093318f)
+![16](https://github.com/user-attachments/assets/8543d74f-e5c4-483f-8489-11eef093318f)<br>
 
-*17*
+![17](https://github.com/user-attachments/assets/1e3cf1d0-9b9a-481f-a40e-8f8a2b441f1d)<br>
+
 
 After installation, let's start and enable Cassandra:<br>
 
@@ -203,6 +204,43 @@ After installation, let's start and enable Cassandra:<br>
 We also need to edit the configuration for Elasticsearch.<br>
 
 `nano /etc/elasticsearch/elasticsearch.yml`<br>
+![18](https://github.com/user-attachments/assets/91ba0ef3-1c4b-4906-b2b9-ba15f0cee30d)<br>
+![19](https://github.com/user-attachments/assets/0bab5a90-e3c2-473f-83a8-f8a70c01833f)<br>
 
-*18*
-*19*
+Next, let's start and enable Elasticsearch:<br>
+
+`sudo systemctl start elasticsearch`<br>
+`sudo systemctl enable elasticsearch`<br>
+Next, we need to modify TheHive's configuration. However, before proceeding, we must update the ownership of the `/opt/thp` directory, assigning it to the `thehive` user and group.<br>
+
+`chown -R thehive:thehive /opt/thp`<br>
+![20](https://github.com/user-attachments/assets/bd563a2e-c124-463e-a7fd-ee4a3509d75a)<br>
+
+`nano /etc/thehive/application.conf`<br>
+![21](https://github.com/user-attachments/assets/6dbd9ab9-edfc-4cdb-b8d3-4440832b00b4)<br>
+
+![22](https://github.com/user-attachments/assets/10518305-7a6f-433a-9e27-7843cf6573b9)<br>
+
+Now, let's access TheHive by navigating to `http://192.168.204.149:9000`.<br>
+![23](https://github.com/user-attachments/assets/e91cba42-f594-43f7-bc50-3593d545fb99)<br>
+
+The default admin user credentials are as follows:<br>
+- Username: admin@thehive.local <br>
+- Password: secret <br>
+
+I encountered an authentication failure when attempting to access it. Let's work on resolving this issue.<br>
+
+`nano /etc/elasticsearch/jvm.options.d/jvm.option`<br>
+
+`-Dlog4j2.formatMsgNoLookups=true
+-Xms2g<br>
+-Xmx2g`<br>
+![24](https://github.com/user-attachments/assets/f679fc14-8b76-4dbe-92a6-d0325923ab33)<br>
+
+Then restart the Elasticsearch.<br>
+
+
+`systemctl restart elasticsearch`<br>
+Now, let's access TheHive again.<br>
+![25](https://github.com/user-attachments/assets/790aea2b-50c5-428a-ad27-66ccaeb6b842)
+
