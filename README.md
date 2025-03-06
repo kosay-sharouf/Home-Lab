@@ -298,6 +298,44 @@ Next, we need to create an index for the archives. Let's move forward with this 
 ![39](https://github.com/user-attachments/assets/e1a17782-56f4-4784-a818-f3c0cad75c88)<br>
 ![40](https://github.com/user-attachments/assets/281ad190-64ca-49e6-9a8e-2ba0c8e5c6df)<br>
 
+Let's return to the Discover page.<br>
+![41](https://github.com/user-attachments/assets/12e505bd-93ea-4c29-ac47-3cde0af4c202)<br>
+Let's execute Mimikatz again and review the logs in the Wazuh dashboard.<br>
+![42](https://github.com/user-attachments/assets/92b164f0-e8a0-44fc-b3b6-3f33b9237e78)<br>
+![43](https://github.com/user-attachments/assets/27e0ab2e-97f7-4c03-a894-1197d1eb9dfe)<br>
 
+We now need to create a rule to detect and generate an alert for Mimikatz activity.<br>
+![44](https://github.com/user-attachments/assets/3c48d69c-4289-4a83-852c-040388ed3b52)<br>
+![45](https://github.com/user-attachments/assets/d7072161-eefb-4b34-9842-a004b0c0e895)<br>
+![46](https://github.com/user-attachments/assets/d0abca09-cfe2-4a47-b24c-e86118521574)<br>
 
+We need to copy this section as it will be used to create a custom rule.<br>
+![47](https://github.com/user-attachments/assets/579ee837-04c9-42f2-9715-48675eb23185)<br>
+Let's proceed with creating our custom rule.<br>
+![48](https://github.com/user-attachments/assets/ec8aeeff-0948-4a9c-8906-bf86f557ccd0)<br>
+![49](https://github.com/user-attachments/assets/15bdaba5-3b50-4c57-aa8c-6262f6d68d29)<br>
+![50](https://github.com/user-attachments/assets/b3f5cb4f-76cd-42ae-8938-86073da42009)<br>
 
+`  <rule id="100002" level="10">
+    <if_group>sysmon_event1</if_group>
+    <field name="win.eventdata.originalFileName" type="pcre2">(?i)mimikatz\.exe</field>
+    <description>Mimikatz Usage Detected</description>
+    <mitre>
+      <id>T1003</id>
+    </mitre>
+  </rule>    `<br>
+  
+  ![51](https://github.com/user-attachments/assets/bc8a4ba5-0ef9-499f-b111-077f0b6434a0)<br>
+
+  The `win.eventdata.originalFileName` field refers to the original name embedded within the file's metadata, which doesn't change even if the file is renamed on disk. Therefore, if an attacker simply renames `mimikatz.exe` to another name, this rule would still trigger an alert because the original filename remains `mimikatz.exe`.<br>
+
+Let's rename `mimikatz.exe` to an alternative name, execute it, and verify whether Wazuh generates an alert.<br>
+
+![52](https://github.com/user-attachments/assets/3ccab3a9-3da2-41f5-a3e3-be8ab2c1a5f6)<br>
+![53](https://github.com/user-attachments/assets/72bd6cd8-e3e6-4a09-80df-50990c559de5)<br>
+![54](https://github.com/user-attachments/assets/de71baa0-d08a-4ff8-9dce-9200c51ef5ef)<br>
+![55](https://github.com/user-attachments/assets/915d2337-12d5-45f2-9774-cd37239e1e04)<br>
+![56](https://github.com/user-attachments/assets/64f1676c-ee8a-4e71-814a-7971d3caa7b6)<br>
+
+If the rule is based on the image, the alert will not be triggered.<br>
+  
