@@ -728,4 +728,11 @@ Let's also generate and send an alert to TheHive.<br><br>
 
 `Summary -> Multiple SSH login attempts using non-existent usernames on host: $exec.all_fields.predecoder.hostname from source IP:$exec.all_fields.data.srcip`<br><br>
 
+![image](https://github.com/user-attachments/assets/21843177-f60c-413e-ab8d-2de808cca402)<br><br>
+![image](https://github.com/user-attachments/assets/c444f77e-6662-4707-8c58-5eb84db1203d)<br><br>
+Now, let's save the changes and execute the workflow again.<br><br>
+![image](https://github.com/user-attachments/assets/d54d5218-4f12-45be-881a-996ea65152fd)<br><br>
+![image](https://github.com/user-attachments/assets/3d7a55ea-f13c-41bb-964d-faaffb9b18dc)<br><br>
+I hope the project was clear and easy to understand. Thank you for Reading<br><br>
+<hr>
 
