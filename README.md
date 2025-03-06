@@ -275,6 +275,29 @@ Next, let's proceed with editing the `ossec.conf` file.<br>
 `nano /var/ossec/etc/ossec.conf`<br>
 ![33](https://github.com/user-attachments/assets/cce45b93-148b-4c9d-8509-e2a9d7cafc64)
 
+Now, let's restart the Wazuh manager.<br>
+
+`systemctl restart wazuh-manager` <br>
+This action compels Wazuh to start archiving all logs and store them in a file named "archives."<br>
+
+`cd /var/ossec/logs/archives/`<br>
+`ls`<br>
+![34](https://github.com/user-attachments/assets/0e0d3c4f-c667-4d84-a8b3-9efa77927fcf) <br>
+
+We also need to configure the `filebeat.yml` file.<br>
+
+![35](https://github.com/user-attachments/assets/3ca74ee1-4699-4e66-8286-a7782789badf)
+
+Next, let's restart the Filebeat manager.<br>
+
+`systemctl restart filebeat` <br>
+Next, we need to create an index for the archives. Let's move forward with this step.<br>
+![36](https://github.com/user-attachments/assets/fbbcd682-29e1-46e7-95d3-39b503ea5fcf)<br>
+![37](https://github.com/user-attachments/assets/0d9a2db0-2ffa-490a-aec8-247049534a31)<br>
+![38](https://github.com/user-attachments/assets/4837bba3-89ae-48fa-b94a-4206d14c4d45)<br>
+![39](https://github.com/user-attachments/assets/e1a17782-56f4-4784-a818-f3c0cad75c88)<br>
+![40](https://github.com/user-attachments/assets/281ad190-64ca-49e6-9a8e-2ba0c8e5c6df)<br>
+
 
 
 
