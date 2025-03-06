@@ -483,6 +483,83 @@ Let's explore a different scenario:
 
   Let's start by setting up a new Ubuntu machine and conduct an SSH attack on it. However, before proceeding with the attack, we need to install a Wazuh agent on the machine to collect and analyze logs for monitoring and security analysis.<br>
   
-![image](https://github.com/user-attachments/assets/a1d6dd43-1e02-425d-a9be-e160b8fe2559)
-![image](https://github.com/user-attachments/assets/702a27e2-4529-4867-93de-f404bf45740e)
-![image](https://github.com/user-attachments/assets/39fa74bf-7752-463d-bce4-a8e5f6240e5b)
+![image](https://github.com/user-attachments/assets/a1d6dd43-1e02-425d-a9be-e160b8fe2559)<br>
+![image](https://github.com/user-attachments/assets/702a27e2-4529-4867-93de-f404bf45740e)<br>
+![image](https://github.com/user-attachments/assets/39fa74bf-7752-463d-bce4-a8e5f6240e5b)<br>
+
+Let's run this command on the Ubuntu machine we set up to install the Wazuh agent.<br>
+`wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.10.1-1_amd64.deb && sudo WAZUH_MANAGER='192.168.204.150' WAZUH_AGENT_NAME='Ubuntu' dpkg -i ./wazuh-agent_4.10.1-1_amd64.deb`<br>
+![image](https://github.com/user-attachments/assets/8ff27c26-9195-4a58-a1f7-becbf82243f0)<br>
+`sudo systemctl daemon-reload`<br>
+`sudo systemctl enable wazuh-agent`<br>
+`sudo systemctl start wazuh-agent`<br>
+`sudo systemctl status wazuh-agent`<br>
+![image](https://github.com/user-attachments/assets/4d8c4a76-ee96-4b9d-9220-d2f174d8e91c)<br>
+
+Let's install the SSH server on the Ubuntu machine that will be used as the target for the SSH attack.<br>
+`sudo apt update`<br>
+`sudo apt install openssh-server -y`<br>
+`sudo systemctl start ssh`<br>
+`sudo systemctl enable ssh`<br>
+`sudo systemctl status ssh`<br>
+![image](https://github.com/user-attachments/assets/b5b65ebf-8576-4b2d-9c54-4819ef99a23b)<br>
+Next, we need to conduct an SSH attack on this machine from a separate system. I created two files containing usernames and passwords to utilize in the attack.<br>
+`hydra -L users.txt -P passwords.txt ssh://192.168.204.146`<br>
+![image](https://github.com/user-attachments/assets/90b93ad7-9062-400f-b44d-e0cece25eb3b)<br><br><br>
+Let's review the logs to determine the cause of the attack.<br>
+![image](https://github.com/user-attachments/assets/09839b08-4fdc-41b6-887c-9ecfd6db5a66)<br><br><br>
+
+Let's review our Wazuh dashboard to determine if any logs related to this attack have been recorded.<br>
+![image](https://github.com/user-attachments/assets/cbfebfeb-c8ad-44b1-932c-37b7f81f643c)<br><br>
+![image](https://github.com/user-attachments/assets/09072659-83d1-4c39-a59e-94f0756c2b19)<br><br>
+![image](https://github.com/user-attachments/assets/1e252ebe-aa99-4ad0-a9e4-8faa28ef78cc)<br><br>
+![image](https://github.com/user-attachments/assets/0f0a41de-bb39-4649-a45b-149ed4986e81)<br><br>
+
+We are currently observing a significant number of Level 5 alerts related to SSH brute-force attacks. To enhance detection, we will create a rule that triggers an additional alert when the specific Level 5 alert "sshd: Attempt to login using a non-existent user" occurs more than three times within a 60-second timeframe. This new alert will explicitly indicate that an SSH brute-force attack is in progress.<br><br>
+
+`nano /var/ossec/etc/rules/local_rules.xml`<br>
+<pre>
+  <rule id="5764" level="10" frequency="3" timeframe="60">
+    <if_matched_sid>5710</if_matched_sid>
+    <same_source_ip />
+    <description>Multiple SSH login attempts using non-existent usernames.</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+  </rule>
+</pre> <br><br>
+![image](https://github.com/user-attachments/assets/ed13bcdc-6828-4831-af85-8d91319a4959)<br><br>
+
+`systemctl restart wazuh-manager`<br>
+
+### Rule Breakdown:
+1- `<rule id="5764" level="10" frequency="3" timeframe="60">`:<br>
+- `id="5764"`: A unique identifier for this rule.
+
+- `level="10"`: The severity level of the alert (10 is relatively high, indicating a significant security event).
+
+- `frequency="3"`: The rule triggers an alert if the event occurs 3 times.
+
+- `timeframe="60"`: The event must occur 3 times within 60 seconds for the alert to trigger.
+
+2- `<if_matched_sid>5710</if_matched_sid>`:
+
+- This rule depends on another rule with ID `5710`. Rule `5710` is typically a base rule that detects a single failed SSH login attempt using a non-existent username.
+
+- This means the rule will only trigger if rule `5710` has already matched (i.e., a failed SSH login attempt with an invalid username has been detected).
+
+3- `<same_source_ip />`:
+
+- This ensures that the same source IP address is responsible for the multiple failed attempts.
+
+- Without this, the rule might trigger for failed attempts from different IPs, which is less indicative of a brute-force attack.
+
+4- `<description>Multiple SSH login attempts using non-existent usernames.</description>`:
+
+- A human-readable description of the rule. This will appear in the alert message.
+
+5- `<mitre><id>T1110</id></mitre>`:
+
+- Maps this rule to the MITRE ATT&CK framework.
+
+- `T1110` refers to the technique "Brute Force", which is used by attackers to guess usernames and passwords.
