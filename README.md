@@ -563,3 +563,168 @@ We are currently observing a significant number of Level 5 alerts related to SSH
 - Maps this rule to the MITRE ATT&CK framework.
 
 - `T1110` refers to the technique "Brute Force", which is used by attackers to guess usernames and passwords.
+
+Let's simulate the brute force attack again to verify the effectiveness of the rule.<br><br>
+`hydra -L users.txt -P passwords.txt ssh://192.168.204.146`<br>
+![image](https://github.com/user-attachments/assets/955a194a-cd1a-494f-bc7d-6689149f7e21)<br><br>
+
+Next, let's review the alerts in the Wazuh dashboard.<br>
+![image](https://github.com/user-attachments/assets/1bc03735-b2b3-47a8-b6c5-6beddee39263)<br><br>
+We received an alert triggered by Rule ID 5764, which we previously configured to activate when Event ID 5710 occurs three times. To reduce the frequency of alerts, we can modify the rule to trigger after five occurrences instead of three.<br><br>
+![image](https://github.com/user-attachments/assets/23a7ae2f-0fab-4c56-b932-c289b75a0968)<br><br>
+Next, let's set up a webhook to receive alerts from the Wazuh dashboard.<br><br>
+![image](https://github.com/user-attachments/assets/d39575cc-6c45-427f-b295-4e15bf101ed5)<br><br>
+![image](https://github.com/user-attachments/assets/4b563033-998d-49d1-a3bc-569ebe0a31f4)<br><br>
+Now, let's modify the Wazuh configuration to include our webhook URL.<br><br>
+`nano /var/ossec/etc/ossec.conf`<br><br>
+![image](https://github.com/user-attachments/assets/7d6022e2-e88a-479f-92b1-d35c0b6d07fb)
+`systemctl restart wazuh-manager`<br>
+Let's reattempt the attack and check if any results appear in Shuffle.
+![image](https://github.com/user-attachments/assets/72c9c210-ea30-4819-a818-ebb1e768393b)
+We now need to submit the IP address to VirusTotal for analysis.
+![image](https://github.com/user-attachments/assets/e8b5b621-8c23-42be-b52b-02098dcff190)
+As previously mentioned, you must provide your API key for authentication.
+![image](https://github.com/user-attachments/assets/2921b996-56e8-463c-9cc8-561d48d0ea23)
+Let's rerun the process and review the results from VirusTotal.
+![image](https://github.com/user-attachments/assets/74c237c5-8ee9-4a51-9d6c-aaf60a1bab80)
+![image](https://github.com/user-attachments/assets/e9ca5647-7a97-440b-8826-4682d74ab6b7)
+Since this is our internal IP address, it is not classified as malicious by VirusTotal.
+![image](https://github.com/user-attachments/assets/d75e56ad-9fb7-42ce-a1cf-6de6030b97e0)
+Before proceeding with obtaining the Wazuh API to block the IP address involved in SSH brute-force attacks on an Ubuntu machine, it is essential to first understand Wazuh's Active Response mechanism.
+
+​Wazuh's Active Response feature enables automated reactions to detected threats by executing predefined scripts or commands. A common application is blocking malicious IP addresses to safeguard your systems. 
+
+Active Response is a Wazuh feature that enables automated actions (e.g., blocking an IP, killing a process) in response to detected threats. For example:
+
+- Block an IP address after multiple failed SSH login attempts.
+
+- Block an IP address after a port scan is detected.
+
+Let's open the Wazuh manager configuration file:
+`nano /var/ossec/etc/ossec.conf`
+![image](https://github.com/user-attachments/assets/3032960d-273f-4de8-a269-32b69fc3e48b)
+We need to specify the action to be taken when a threat is detected. Wazuh provides default scripts, like `firewall-drop`, which utilize the system's firewall to block IPs.​
+![image](https://github.com/user-attachments/assets/3787ad3a-4a05-4add-92b5-986dcade6276)
+<pre>
+ <command>firewall-drop</command>
+<location>local</location>
+<rules_id>5764</rules_id>                                          
+<timeout>no</timeout>
+</pre>
+
+`firewall-drop`: This is the command that will execute the script to block the IP.
+
+- `rules_id`: Specify the rule IDs that should trigger the Active Response.
+
+- `local`: Indicates that the command should run on the agent where the threat was detected.
+
+- `no`: Specifies that the block remains indefinitely, requiring manual intervention to lift it.
+
+This setup ensures that when rule 5764 is triggered, the offending IP is blocked locally without an automatic unblock.​
+
+Next, let's save the file and restart the Wazuh Manager to apply the changes.
+
+`systemctl restart wazuh-manager`
+Before proceeding with using Shuffle to block the IP, let's first understand the scenario. There is a tool called agent_control. This tool, provided by Wazuh, enables administrators to manage and monitor Wazuh agents from the Wazuh Manager. It allows for various administrative tasks, including listing connected agents, restarting or removing agents, and checking their status.
+
+Also, Wazuh's `agent_control` utility can be used to manually block specific IP addresses across your monitored endpoints.
+![image](https://github.com/user-attachments/assets/9fc268a1-426e-46dd-aa39-b25dab905447)
+Let's display the list of available active responses.
+`./agent_control -L`
+![image](https://github.com/user-attachments/assets/33b3a1d0-d634-4690-997d-350faf001195)
+Here is the active response we created before. This command will display all configured active responses, allowing us to choose the appropriate one for blocking IP addresses. ​
+
+We will attempt to block the Ubuntu machine from pinging 8.8.8.8 using `agent_control`. However, before implementing the block, we will first verify that the Ubuntu machine can successfully ping 8.8.8.8.
+`ping 8.8.8.8`
+![image](https://github.com/user-attachments/assets/4e0f8519-6b2d-4a32-97fc-da61a2507922)
+Now, let's execute the active response command.
+
+`./agent_control -b 8.8.8.8 -f firewall-drop0 -u 002`
+`-b 8.8.8.8`: Specifies the IP address to be targeted by the active response
+
+`-f firewall-drop0`: Indicates the active response command to execute. firewall-drop is a standard script in Wazuh designed to block IP addresses using the system's firewall
+
+`-u 002`: Identifies the agent by its unique ID (002) on which the active response should be executed.​
+![image](https://github.com/user-attachments/assets/f32dcdac-dee8-4ceb-b96f-72fe614c5c9c)
+![image](https://github.com/user-attachments/assets/0ec0d9e2-d602-4665-952b-e33d59755c1f)
+Next, let's try to ping 8.8.8.8 from the Ubuntu machine.
+![image](https://github.com/user-attachments/assets/f476988e-1e63-43bd-a6d5-a1923316308b)
+Let's confirm this by reviewing the firewall rules.
+
+`sudo iptables --list`
+![image](https://github.com/user-attachments/assets/01685d3a-75c3-4651-aa51-8bfc6ea6451a)
+We can also review the logs of the active response from this location.
+
+`cat /var/ossec/logs/active-responses.log`
+![image](https://github.com/user-attachments/assets/84aaa113-f027-4d58-b3b0-8047a1e04ad2)
+Now, let's return to our Shuffle workflow and utilize an HTTP app to retrieve the Wazuh API JWT.
+
+However, obtaining the API JWT requires access to the necessary credentials.
+![image](https://github.com/user-attachments/assets/fd68da01-ea7e-42b6-a0ba-32dc460c6321)
+During the Wazuh installation process, we previously downloaded this file. We now need to extract it in order to retrieve the credentials required to obtain the JWT.
+
+`tar -xvf wazuh-install-files.tar`
+![image](https://github.com/user-attachments/assets/a2e251e4-d84b-45ca-bbe4-2d90336d7cca)
+You can find the necessary credentials in the file wazuh-passwords.txt.
+
+We can get the JWT we need using the following command:
+
+`curl -u username:password -k -X GET "https://192.168.204.150:55000/security/user/authenticate?raw=true`
+Let's proceed with this on Shuffle. However, before doing so, let's remove the rule that blocks ping requests to 8.8.8.8 on the Ubuntu machine. Once the rule is removed, we can attempt the same scenario using Shuffle.
+
+`sudo iptables -L -n -v --line-numbers`
+![image](https://github.com/user-attachments/assets/2613c49a-f25a-4deb-8728-fe21a4807bb3)
+`sudo iptables -D INPUT 1`
+`sudo iptables -D INPUT 1`
+![image](https://github.com/user-attachments/assets/f87035bb-4177-48cf-9949-aaf56c206410)
+`ping 8.8.8.8`
+![image](https://github.com/user-attachments/assets/b7d9ba8d-418c-43db-879f-94dc0b84c5df)
+Now, let's attempt to block the IP using the Shuffle workflow.
+![image](https://github.com/user-attachments/assets/92a8a5da-3b28-4f36-8dcf-6a385275ddb7)
+![image](https://github.com/user-attachments/assets/7170bf3a-0275-4bdf-8dc6-9aaf7010fbeb)
+You will need to enter your IP address, username, and password.
+![image](https://github.com/user-attachments/assets/61927b06-5163-4429-83a9-e23aa3cc1e39)
+Now, let's integrate the Wazuh application into our workflow.
+![image](https://github.com/user-attachments/assets/a2d7e063-a636-4d45-b108-13bc2da0eb4c)
+![image](https://github.com/user-attachments/assets/dccb20f5-6cba-4800-b96e-4635cdb23000)
+![image](https://github.com/user-attachments/assets/afbdab77-5678-42de-a86e-cb0a0b5f0b87)
+![image](https://github.com/user-attachments/assets/2c2beb91-831e-4645-ae33-41b04c809200)
+Let's save the changes and execute the workflow again.
+![image](https://github.com/user-attachments/assets/50d027c9-b88a-4513-aa2c-21322bfd5af7)
+![image](https://github.com/user-attachments/assets/b2b50c90-8f8a-436e-a6d5-0c91ae7fd9f2)
+Let's verify whether the Ubuntu machine can successfully ping 8.8.8.8.
+`ping 8.8.8.8`
+![image](https://github.com/user-attachments/assets/e495f42d-16ff-46bd-a981-02c3c0858dd3)
+
+`iptables -L`
+![image](https://github.com/user-attachments/assets/5c400df3-ae0e-4359-945d-694d897c5567)
+Let's incorporate the user input trigger into our workflow to send an email to the analyst, allowing them to decide whether to block the IP address.
+
+Before utilizing the user input trigger, let's first create a new workflow named "Send an Alert." This workflow will be used to send an alert via a Telegram bot.
+![image](https://github.com/user-attachments/assets/73a60df2-afd6-4d4e-8250-3c0664510c56)
+Next, after saving the workflow, we will incorporate the user input trigger into the process.
+![image](https://github.com/user-attachments/assets/4e05a738-59c8-4161-be4c-3307031dc636)
+
+Let's configure the Wazuh application to dynamically assign the source IP.
+`{"data":{"srcip":"$exec.all_fields.data.srcip"}}`
+![image](https://github.com/user-attachments/assets/994eaa98-3b0f-4aaa-bbf5-969b364676cf)
+![image](https://github.com/user-attachments/assets/114c8712-f48a-4904-9e92-a503c973d831)
+![image](https://github.com/user-attachments/assets/6891fb10-7155-48d0-bb29-d77f7a278f77)
+Now, let's review the other workflow to ensure everything is functioning correctly.
+![image](https://github.com/user-attachments/assets/04760a43-3cc7-4b3c-95cf-ae005cea9281)
+We now need to integrate the Telegram app into this workflow to send the alert to the analyst.
+Note: everything can use that
+
+Now that we have blocked the IP address 192.168.204.151 from attacking the Ubuntu machine at 192.168.204.146, let's verify whether the attacker can still ping the Ubuntu machine.
+
+`ping 192.168.204.146`
+![image](https://github.com/user-attachments/assets/6f7ef03c-6f95-4725-9dcd-90315e998de8)
+Let's also review the firewall rules on the Ubuntu machine.
+`iptables -L`
+![image](https://github.com/user-attachments/assets/ced820ef-7c15-4592-96fd-e1653ab0156b)
+Let's also generate and send an alert to TheHive.
+![image](https://github.com/user-attachments/assets/41f3c3ac-bebf-44b9-b5fe-0e0db8385680)
+
+`Summary -> Multiple SSH login attempts using non-existent usernames on host: $exec.all_fields.predecoder.hostname from source IP:$exec.all_fields.data.srcip`
+
+
