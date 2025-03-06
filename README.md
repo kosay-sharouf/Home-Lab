@@ -1,4 +1,4 @@
-![77](https://github.com/user-attachments/assets/014e265a-16b6-4d4d-8055-9820f85c63b0)# Build Home Lab - SOC Automation
+# Build Home Lab - SOC Automation
 
 ## Objective
 
@@ -459,9 +459,28 @@ Let's execute the workflow again.<br>
 
 Next, we need to rerun the process to ensure everything functions correctly.<br>
 ![101](https://github.com/user-attachments/assets/2bf89ee7-9240-4a47-a611-9523cacbac6a)<br>
-Now, let's log in to TheHive using the previously created account, "Omar," to check for any alerts.<br>
+Now, let's log in to TheHive using the previously created account, "Kosay," to check for any alerts.<br>
 ![102](https://github.com/user-attachments/assets/bc30b13e-0365-4cc7-8e1b-73f0f7efa7a9)<br>
 ![103](https://github.com/user-attachments/assets/60eaf3c0-38d4-4eea-86ef-a687b7cfc834)<br>
-The alert has been successfully sent to TheHive. The next step is to notify the analyst via telegram boot. <br>
-You can see how to create telegram boot to send alerts via this link: `https://faresbltagy.gitbook.io/footprintinglabs/weinnovate-training/soar/send-alerts-to-email-and-telegram-bot`<br>
+
+
+## Response to SSH Attack Using Shuffle, Wazuh, and TheHive
+Let's explore a different scenario:
+
+- Create ubuntu machine
+
+- Install Wazuh agent on ubuntu
+
+- Perform SSH attack on this machine
+
+- Push all level 5 alerts to Shuffle
+
+- Perform IP enrichment using VirusTotal
+
+- Send details to the analyst via telegrm bot (ask to block source ip)
+
+- Create an alert in TheHive
+
+  Let's start by setting up a new Ubuntu machine and conduct an SSH attack on it. However, before proceeding with the attack, we need to install a Wazuh agent on the machine to collect and analyze logs for monitoring and security analysis.<br>
+  
 
