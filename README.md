@@ -483,4 +483,6 @@ Let's explore a different scenario:
 
   Let's start by setting up a new Ubuntu machine and conduct an SSH attack on it. However, before proceeding with the attack, we need to install a Wazuh agent on the machine to collect and analyze logs for monitoring and security analysis.<br>
   
-
+![image](https://github.com/user-attachments/assets/a1d6dd43-1e02-425d-a9be-e160b8fe2559)
+![image](https://github.com/user-attachments/assets/702a27e2-4529-4867-93de-f404bf45740e)
+![image](https://github.com/user-attachments/assets/39fa74bf-7752-463d-bce4-a8e5f6240e5b)
